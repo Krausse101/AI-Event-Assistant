@@ -2,10 +2,10 @@ import streamlit as st
 import pandas as pd
 import openai
 
-# Load API key from Streamlit secrets
-openai.api_key = st.secrets["OPENAI_API_KEY"]
+# Set API key from Streamlit secrets
+client = openai.OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
 
-# App UI
+# App layout
 st.set_page_config(page_title="AI Event Assistant", layout="wide")
 st.title("🤖 AI Event Assistant")
 st.write("Ask questions about the event data stored in the Master Schedule Excel file.")
@@ -29,7 +29,7 @@ except Exception as e:
 # User input
 question = st.text_input("🔍 What would you like to know?", placeholder="e.g., Which events did Alante and Aleca pay for in March?")
 
-# Submit button logic
+# Handle user question
 if st.button("Ask"):
     if question.strip() == "":
         st.warning("Please enter a question.")
@@ -37,8 +37,8 @@ if st.button("Ask"):
         with st.spinner("Thinking..."):
             prompt = f"""
 You are an assistant that helps summarize event tracking data for a healthcare organization.
-
 Here is the event data:
+
 {data_string}
 
 Now, answer this question based on the data above:
@@ -46,10 +46,8 @@ Now, answer this question based on the data above:
 
 Provide the answer in a clean, concise, readable summary.
 """
-
             try:
-               client = openai.OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
-response = client.chat.completions.create(
+                response = client.chat.completions.create(
                     model="gpt-3.5-turbo",
                     messages=[
                         {"role": "system", "content": "You are a helpful assistant for analyzing Excel event data."},
@@ -62,5 +60,3 @@ response = client.chat.completions.create(
                 st.write(answer)
             except Exception as e:
                 st.error(f"OpenAI Error: {e}")
-
-
