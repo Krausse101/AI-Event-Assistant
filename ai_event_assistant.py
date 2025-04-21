@@ -1,13 +1,9 @@
-
 import streamlit as st
 import pandas as pd
-import os
-from dotenv import load_dotenv
 from openai import OpenAI
 
-# Load environment variables
-load_dotenv()
-api_key = os.getenv("OPENAI_API_KEY")
+# Use secret from Streamlit Cloud
+api_key = st.secrets["OPENAI_API_KEY"]
 client = OpenAI(api_key=api_key)
 
 # App title and instructions
