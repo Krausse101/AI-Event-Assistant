@@ -48,7 +48,8 @@ Provide the answer in a clean, concise, readable summary.
 """
 
             try:
-                response = openai.ChatCompletion.create(
+               client = openai.OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
+response = client.chat.completions.create(
                     model="gpt-3.5-turbo",
                     messages=[
                         {"role": "system", "content": "You are a helpful assistant for analyzing Excel event data."},
