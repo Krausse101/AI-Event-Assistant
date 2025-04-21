@@ -2,33 +2,11 @@ import streamlit as st
 import pandas as pd
 import openai
 
-# Use secret from Streamlit Cloud
-api_key = st.secrets["OPENAI_API_KEY"]
-openai.api_key = api_key
+# New client object required by OpenAI v1+
+client = openai.OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
 
-# App title and instructions
-st.set_page_config(page_title="AI Event Assistant", layout="wide")
-st.title("🤖 AI Event Assistant")
-st.write("Ask questions about the event data stored in the Master Schedule Excel file.")
-
-# Load data
-try:
-    df = pd.read_excel("Master Schedule.xlsm", sheet_name="Data")
-    df = df[[
-        "Event Name",
-        "Event Date",
-        "State?",
-        "Which Budget/Department will pay for event?",
-        "Who attended the Event?",
-        "How many contacts were made?"
-    ]]
-    data_string = df.to_string(index=False)
-except Exception as e:
-    st.error(f"Error loading Excel file: {e}")
-    st.stop()
-
-# User input
-question = st.text_input("🔍 What would you like to know?", placeholder="e.g., Which events did Alante and Aleca pay for in March?")
+# Load and prepare Excel data as before...
+# [your existing code up to the Ask button]
 
 # Run on submit
 if st.button("Ask"):
@@ -48,7 +26,7 @@ Now, answer this question based on the data above:
 Provide the answer in a clean, concise, readable summary.
 '''
             try:
-                response = openai.ChatCompletion.create(
+                response = client.chat.completions.create(  # ✅ New method
                     model="gpt-3.5-turbo",
                     messages=[
                         {"role": "system", "content": "You are a helpful assistant for analyzing Excel event data."},
