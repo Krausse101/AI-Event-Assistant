@@ -1,10 +1,10 @@
 import streamlit as st
 import pandas as pd
-from openai import OpenAI
+import openai
 
 # Use secret from Streamlit Cloud
 api_key = st.secrets["OPENAI_API_KEY"]
-client = OpenAI(api_key=api_key)
+openai.api_key = api_key
 
 # App title and instructions
 st.set_page_config(page_title="AI Event Assistant", layout="wide")
@@ -48,7 +48,7 @@ Now, answer this question based on the data above:
 Provide the answer in a clean, concise, readable summary.
 '''
             try:
-                response = client.chat.completions.create(
+                response = openai.ChatCompletion.create(
                     model="gpt-3.5-turbo",
                     messages=[
                         {"role": "system", "content": "You are a helpful assistant for analyzing Excel event data."},
